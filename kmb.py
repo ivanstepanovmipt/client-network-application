@@ -1,3 +1,4 @@
+
 import logging
 from socket import *
 logging.basicConfig(level=logging.DEBUG)
@@ -23,9 +24,9 @@ if protocol == '-t':
         serverSocket.bind(('', int(serverPort))) #связываем порт, определённого номера с сокетом сервера
         while 1:
             message, clientAddress = serverSocket.recvfrom(2048)
-            modifiedMessage = serverName + ' : ' + serverPort
-            serverSocket.sendto(modifiedMessage, clientAddress) #при получении запроса отправляет ответ, содержащий ip адрес и порт клиента.
-    else :
+            message = str(clientAdress[0]) + ':' + str(clientAdress[1])
+            serverSocket.sendto(message.encode, clientAddress) #при получении запроса отправляет ответ, содержащий ip адрес и порт клиента.
+    else:
         clientSocket = socket(AF_INET, SOCK_DGRAM) #создаём сокет клиента
         if read == '-o':
             logging.info('opening a socket')
@@ -34,7 +35,7 @@ if protocol == '-t':
             file.write(logging.info('opening a socket'))
             file.close()
         message = input('Input lowercase sentence:')
-        clientSocket.sendto(message,(serverName,serverPort)) #посылает запрос серверу по указанному адресу;
+        clientSocket.sendto(message.encode(),(serverName, int(serverPort))) #посылает запрос серверу по указанному адресу;
         if read == '-o':
             logging.info('Sending a message')
         else:
@@ -48,7 +49,7 @@ if protocol == '-t':
             file = open("read.txt", "w")
             file.write(logging.info('Receiving a message'))
             file.close()
-        print(modifiedMessage) #выводит полученный ответ
+        print(modifiedMessage.decode()) #выводит полученный ответ
         clientSocket.close() #завершает свою работу.
         if read == '-o':
             logging.info('Closing the socket')
@@ -68,7 +69,7 @@ else:
             file.close()
         clientSocket.connect((serverName,serverPort))
         sentence = input('Input lowercase sentence:')
-        clientSocket.send(sentence) #посылает запрос серверу по указанному адресу;
+        clientSocket.send(sentence.encode()) #посылает запрос серверу по указанному адресу;
         if read == '-o':
             logging.info('Sending a message')
         else:
@@ -82,7 +83,7 @@ else:
             file = open("read.txt", "w")
             file.write(logging.info('Receiving a message'))
             file.close()
-        print('From Server:', modifiedSentence) #выводит полученный отве
+        print('From Server:', modifiedSentence.decode('utf-8')) #выводит полученный отве
         clientSocket.close() #завершает свою работу.
         if read == '-o':
             logging.info('Closing the socket')
@@ -98,7 +99,5 @@ else:
             connectionSocket, addr = serverSocket.accept()
             sentence = connectionSocket.recv(1024)
             capitalizedSentence = serverName + ' : ' + serverPort
-            connectionSocket.send(capitalizedSentence)
+            connectionSocket.send(capitalizedSentence.encode())
             connectionSocket.close()
-        
-        
