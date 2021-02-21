@@ -1,4 +1,3 @@
-
 import logging
 from socket import *
 logging.basicConfig(level=logging.DEBUG)
@@ -18,14 +17,14 @@ while i < len(lst):
     if lst[i].find('f') != -1:
         read = lst[len(lst) - 1]
     i = i + 1
-if protocol == '-t':
+if protocol == '-u':
     if client == 1:
         serverSocket = socket(AF_INET, SOCK_DGRAM) #создаём сокет клиента
         serverSocket.bind(('', int(serverPort))) #связываем порт, определённого номера с сокетом сервера
         while 1:
             message, clientAddress = serverSocket.recvfrom(2048)
-            message = str(clientAdress[0]) + ':' + str(clientAdress[1])
-            serverSocket.sendto(message.encode, clientAddress) #при получении запроса отправляет ответ, содержащий ip адрес и порт клиента.
+            message = str(clientAddress[0]) + ':' + str(clientAddress[1])
+            serverSocket.sendto(message.encode(), clientAddress) #при получении запроса отправляет ответ, содержащий ip адрес и порт клиента.
     else:
         clientSocket = socket(AF_INET, SOCK_DGRAM) #создаём сокет клиента
         if read == '-o':
@@ -67,7 +66,7 @@ else:
             file = open("read.txt", "w")
             file.write(logging.info('opening a socket'))
             file.close()
-        clientSocket.connect((serverName,serverPort))
+        clientSocket.connect((serverName, int(serverPort)))
         sentence = input('Input lowercase sentence:')
         clientSocket.send(sentence.encode()) #посылает запрос серверу по указанному адресу;
         if read == '-o':
@@ -83,7 +82,7 @@ else:
             file = open("read.txt", "w")
             file.write(logging.info('Receiving a message'))
             file.close()
-        print('From Server:', modifiedSentence.decode('utf-8')) #выводит полученный отве
+        print('From Server:', modifiedSentence.decode()) #выводит полученный отве
         clientSocket.close() #завершает свою работу.
         if read == '-o':
             logging.info('Closing the socket')
@@ -93,11 +92,11 @@ else:
             file.close()
     else:
         serverSocket = socket(AF_INET,SOCK_STREAM) #создаём сокет клиента
-        serverSocket.bind(('',serverPort))
+        serverSocket.bind(('',int(serverPort)))
         serverSocket.listen(1)
         while 1:
             connectionSocket, addr = serverSocket.accept()
             sentence = connectionSocket.recv(1024)
-            capitalizedSentence = serverName + ' : ' + serverPort
+            capitalizedSentence = str(addr[0]) + ':' + str(addr[1])
             connectionSocket.send(capitalizedSentence.encode())
             connectionSocket.close()
