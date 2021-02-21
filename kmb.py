@@ -27,12 +27,20 @@ while i < len(lst):
 if protocol == '-u':
     if client == 1:
         serverSocket = socket(AF_INET, SOCK_DGRAM)  # создаём сокет клиента
+        if read == '-o':
+            logging.info('opening a socket')
+        else:
+            PrintInFile(read, 'opening a socket')
         serverSocket.bind(('', int(serverPort)))   # связываем порт
         while 1:
             message, clientAddress = serverSocket.recvfrom(2048)
             message = str(clientAddress[0]) + ':' + str(clientAddress[1])
             serverSocket.sendto(message.encode(), clientAddress)  # отправляет 
             # ответ
+            if read == '-o':
+                logging.info('Sending a message')
+            else:
+                PrintInFile(read, 'Sending a message')
     else:
         clientSocket = socket(AF_INET, SOCK_DGRAM)  # создаём сокет клиента
         if read == '-o':
@@ -84,6 +92,10 @@ else:
             PrintInFile(read, 'Closing the socket')
     else:
         serverSocket = socket(AF_INET, SOCK_STREAM)  # создаём сокет клиента
+        if read == '-o':
+            logging.info('opening a socket')
+        else:
+            PrintInFile(read, 'opening a socket')
         serverSocket.bind(('', int(serverPort)))
         serverSocket.listen(1)
         while 1:
@@ -91,4 +103,8 @@ else:
             sentence = connectionSocket.recv(1024)
             capitalizedSentence = str(addr[0]) + ':' + str(addr[1])
             connectionSocket.send(capitalizedSentence.encode())
+            if read == '-o':
+                logging.info('Sending a message')
+            else:
+                PrintInFile(read, 'Sending a message')
             connectionSocket.close()
